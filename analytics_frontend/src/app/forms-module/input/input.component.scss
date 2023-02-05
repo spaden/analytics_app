@@ -1,0 +1,14 @@
+input {
+    height: 2rem;
+    width: 100%;
+    padding: 5px;
+    padding-left: 10px;
+    border-radius: 0.3rem;
+    border-color: lightblue;
+    border-style: solid;
+    border-width: 1.5px;
+
+    &.ng-invalid.ng-touched {
+        border: 1px solid red;
+    }
+}

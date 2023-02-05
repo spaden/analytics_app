@@ -1,0 +1,8 @@
+<button [name]="name"
+        [id]="name"
+        [disabled]="disabled"
+        (click)="onClicked()"
+        mat-flat-button
+        [color]="btnType == 'primary' ? 'primary' : 'accent' ">
+    {{value}}
+</button>
