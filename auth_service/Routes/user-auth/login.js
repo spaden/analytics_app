@@ -9,8 +9,7 @@ router.post('/', (req, res) => {
     
     res.type('text/plain')
     res.status(200)
-    res.send('Success')
+    res.send()
 })
-
 
 module.exports = router;

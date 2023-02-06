@@ -1,0 +1,35 @@
+<div class="home">
+   <div class="home__content">
+        <div class="home__content__article">
+            <h1>One Click</h1>
+            <span>
+                <h1>Analytics</h1>
+            </span>
+            <h1>That simple</h1>
+        </div>
+   </div>
+   <div class="home__form">
+        <div class="home__form__sgln">
+            <h2>Login/Sign Up</h2>
+            <div class="home__form__sgln__formelement">
+                <app-input name="username"
+                    [value]="username"
+                    (onChange)="onInputChange($event)"
+                    placeholder="username">
+                </app-input>
+            </div>
+            <div class="home__form__sgln__formelement">
+                <app-input name="userpass"
+                    [value]="userpass"
+                    (onChange)="onInputChange($event)"
+                    placeholder="password">
+                </app-input>
+            </div>
+            <div class="home__form__sgln__formelement--btn">
+                <app-button value="Start asap!"
+                    (onClick)="test()"
+                    btnType="primary"></app-button>
+            </div>
+        </div>
+   </div>
+</div>

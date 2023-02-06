@@ -7,18 +7,22 @@ let app = require('express')(),
     path = require('path');
 
 let login = require('./Routes/user-auth/login')
-
+let authToken = require('./Routes/user-auth/authtoken')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
     
-app.use(cors());
+app.use(cors())
+app.options('*', cors())
 app.use('/login', login)
+app.use('/authtoken', authToken)
 
 
 app.use(function(req, res, next) {
     next();
 });
+
+
 
 // app.use('/images/GymImages', express.static(__dirname+'/Assets/'))
 
@@ -29,5 +33,5 @@ app.get('*', (req, res) => {
 
 
 server.listen(3000, function() {
-    console.log('app listening on port: 3000');
-});
+    console.log('app listening on port: 3000')
+})
