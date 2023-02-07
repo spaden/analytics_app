@@ -1,29 +1,52 @@
 .home {
     display: grid;
     height: 100%;
-    background-color: #fff;
     grid-template-columns: 1fr 1.2fr;
-
+    background: #DE6262;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #FFB88C, #DE6262);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #FFB88C, #DE6262); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
     &__content {
-        width: 100%;
+        min-width: 100%;
         height: 100%;
         display: grid;
         justify-items: center;
         align-items: center;
         &__article {
-            width: 80%;
+            min-width: 350px;
             height: 400px;
             display: flex;
             flex-direction: column;
             padding: 1rem;
-            background-color: rgb(102, 123, 241);
             transform: translateY(-5rem);
             justify-content: center;
-            span {
-                display: flex;
-                justify-content: flex-end;
-                align-items: center;
-                height: 10rem;
+            h1 {
+                padding: 0.2rem;
+                background-color: #61abb3cc;
+                border-radius: 0.2rem;
+                color: white;
+                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            }
+
+            h1:first-child {
+                padding-left: 0.5rem;
+                h2 {
+                    display: inline;
+                    
+                }
+            }
+
+            h1:nth-child(2) {
+                text-align: center;
+            }
+
+            h1:nth-child(3) {
+                text-align: end;
+                padding-right: 0.5rem;
+            }
+
+            h1:not(h1:first-child) {
+                margin-top: 0.9rem;
             }
         }
     }
@@ -35,7 +58,7 @@
         justify-items: center;
         align-items: center;
         &__sgln {
-            width: 80%;
+            min-width: 400px;
             height: 400px;
             transform: translateY(-5rem);
             display: flex;
@@ -43,7 +66,10 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            background-color: rgb(154, 230, 230);
+            border-radius: 0.3rem;
+            background-color: #757F9A;
+            color: white;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
             &__formelement {
                 width: 80%;
                 margin-top: 2rem;
