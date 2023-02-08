@@ -25,9 +25,15 @@
             </div>
             <div class="home__form__sgln__formelement--btn">
                 <app-button value="Start asap!"
-                    (onClick)="test()"
+                    (onClick)="authUser()"
                     btnType="primary"></app-button>
             </div>
         </div>
    </div>
 </div>
+
+<div class="spinner"
+     *ngIf="checkinguser">
+    <app-spinner></app-spinner>
+</div>
+    

@@ -84,6 +84,18 @@
     }
 }
 
+.spinner {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    background-color: #dabdbd81;
+}
+
 
 @include xs-breakpoint {
     .home {

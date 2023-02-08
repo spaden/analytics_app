@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
   selector: 'app-home',
@@ -13,8 +14,9 @@ export class HomeComponent implements OnInit {
   
   username = ''
   userpass = ''
+  checkinguser: Boolean = false
   
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private loginservice: LoginService) { }
 
   ngOnInit(): void {
   }
@@ -28,12 +30,16 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  test() {
-    this.http.post('http://localhost:3000/login', {
+  authUser() {
+    this.checkinguser = true
+    this.loginservice.checkUser({
       username: this.username,
       userpass: this.userpass
-    }).subscribe(response => {
-      console.log(response)
+    }).subscribe(resp => {
+      this.checkinguser = false
+    }, error => {
+      alert(error)
     })
+  
   }
 }

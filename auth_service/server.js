@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
     
 app.use(cors())
 app.options('*', cors())
-app.use('/login', login)
+app.use('/user', login)
 app.use('/authtoken', authToken)
 
 

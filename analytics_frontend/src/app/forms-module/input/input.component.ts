@@ -30,4 +30,6 @@ export class InputComponent implements OnInit {
     this.updatedValue.emit({name: this.name, value: this.inputElement.value})
   }
 
+  
+
 }
