@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { LoginService } from 'src/app/services/login.service';
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-home',
@@ -15,8 +16,9 @@ export class HomeComponent implements OnInit {
   username = ''
   userpass = ''
   checkinguser: Boolean = false
+  userAuthError: Boolean = false
   
-  constructor(private http: HttpClient, private loginservice: LoginService) { }
+  constructor(private http: HttpClient, private loginservice: LoginService, private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -37,8 +39,12 @@ export class HomeComponent implements OnInit {
       userpass: this.userpass
     }).subscribe(resp => {
       this.checkinguser = false
+      setTimeout(() => {
+        this.router.navigate(['/analytics'])
+      }, 2000)
     }, error => {
-      alert(error)
+      this.userAuthError = true
+      this.checkinguser = false
     })
   
   }

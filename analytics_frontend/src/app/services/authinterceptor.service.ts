@@ -15,7 +15,7 @@ export class AuthInterceptorService implements HttpInterceptor {
             let http: HttpClient = this.injector.get(HttpClient);
 
             return http.get('http://localhost:3000/authtoken').pipe(switchMap((response: any) => {
-				let clone: HttpRequest<any> = req.clone({ setHeaders: { 'auth-token': response['value'] } });
+				let clone: HttpRequest<any> = req.clone({ setHeaders: { 'auth-token': response['value'] } })
                 
 				// alert('Silent Call ready. Doing original call with Mocky headers');
                 return next.handle(clone);

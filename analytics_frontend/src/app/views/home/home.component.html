@@ -28,6 +28,10 @@
                     (onClick)="authUser()"
                     btnType="primary"></app-button>
             </div>
+            <div class="home__form__sgln__formelement--error"
+                 *ngIf="userAuthError">
+                <p>Authentication error from our side!</p>
+            </div>
         </div>
    </div>
 </div>
