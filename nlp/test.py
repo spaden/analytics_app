@@ -37,7 +37,10 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Embedding, Flatten
 
 from sklearn.model_selection import train_test_split
+import glob
+import json
 
+import os
 
 stemming = PorterStemmer()
 stop_list = set(stopwords.words('english'))
@@ -106,9 +109,9 @@ X_train, X_test, y_train, y_test = train_test_split(df_new, df['spam_not'], test
 
 
 model = Sequential()
-embedding_layer = Embedding(input_dim=50,output_dim=100,input_length=500)
-model.add(embedding_layer)
-model.add(Flatten())
+#embedding_layer = Embedding(input_dim=50,output_dim=100,input_length=500)
+#model.add(embedding_layer)
+#model.add(Flatten())
 
 
 
@@ -131,31 +134,106 @@ model.fit(X_train, y_train, epochs=50)
 ttest = model.predict(X_test)
 
 
-mn = 100000
+filenames = next(os.walk('./formatted_data'))[2]
 
+df_review = pd.DataFrame()
 
-def computedist(a1, a2, b1, b2):
-    res = (a2-a1) ** 2 + (b2-b1) ** 2
-    
-    
-    return round(res ** 0.5, 4)
-
-
-dt = [[0.4, 0.53],
-      [0.22, 0.38],
-      [0.35, 0.32],
-      [0.26, 0.19],
-      [0.08, 0.41],
-      [0.43, 0.3]]
-
-for i in range(len(dt)):
-    mn = 10000
-    for j in range(len(dt)):
+def createDataFrame(file):
+    global df_review
+    with open('./formatted_data/'+file, 'r') as f:
+        data = json.loads(f.read())
+        tt = pd.json_normalize(data)
         
-        res = computedist(dt[i][0], dt[j][0], dt[i][1], dt[j][1])
+        if 'all_reviews' in tt.keys():
+            tt = pd.json_normalize(tt['all_reviews'])
+            print(tt)
+            
+        else:
+        
+            tt['userType'].fillna('Not defined', inplace=True)
+        
+            tt['prevReviewCount'].fillna(0, inplace=True)
+        
+            tt['prevPhotosReview'].fillna(0, inplace=True)
+            
+            tt['reviewDate2'] = None
+            tt['formatted_date'] = None
+            tt['location'] = file.split('.')[0]
+            
+            df_review = pd.concat([df_review, tt], ignore_index=True)
+    
 
-            
-        if res < mn and res != 0:
-            mn = res
-            
-    print('Min for P' + str(i) + ' ' + str(mn))
+for file in filenames:
+    createDataFrame(file)
+    
+    
+complaints = df_review[df_review['rating'] <= 3]
+
+compliments = df_review[(df_review['rating'] >=4) & (df_review['rating'] <=5)]
+
+
+compliments['reviewText'] = compliments['reviewText'].apply(remove_noise)
+complaints['reviewText'] = complaints['reviewText'].apply(remove_noise)
+
+Y = []
+
+for i in range(len(compliments)):
+    Y.append(1)
+    
+for i in range(len(complaints)):
+    Y.append(0)
+    
+Y = pd.DataFrame(Y)
+
+data = pd.concat([compliments, complaints], ignore_index = True)
+
+data = pd.concat([data, Y], axis=1, ignore_index=True)
+
+data = data.sample(frac=1).reset_index(drop=True)
+
+
+
+
+X = data.iloc[:, 7]
+
+tfdf = tfidf.fit_transform(X)
+
+
+X = tfdf.todense()
+
+
+Y = data.iloc[:, 11]
+
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state= 20)
+
+model = Sequential()
+
+model.add(Dense(500, input_shape=(500,), activation='relu'))
+
+model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(50, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(5, activation='relu'))
+model.add(Dense(2, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+
+model.fit(X_train, y_train, epochs=100)
+
+ttest = model.predict(X_test)
+
+
+smp = "worst service, had a very bad experience"
+
+smp = remove_noise(smp)
+
+smp = tfidf.transform([smp]).todense()
+
+print(model.predict(smp))
+
+
+
