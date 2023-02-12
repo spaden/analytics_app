@@ -32,7 +32,7 @@ from nltk.stem import PorterStemmer
 
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Activation
+from tensorflow.keras.layers import Dense, Activation, concatenate
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Embedding, Flatten
 
@@ -41,6 +41,10 @@ import glob
 import json
 
 import os
+
+import tensorflow as tf
+from keras.models import Model, load_model
+
 
 stemming = PorterStemmer()
 stop_list = set(stopwords.words('english'))
@@ -194,37 +198,49 @@ data = data.sample(frac=1).reset_index(drop=True)
 
 
 
-X = data.iloc[:, 7]
+X_gr = data.iloc[:, 7]
 
-tfdf = tfidf.fit_transform(X)
-
-
-X = tfdf.todense()
+tfdf = tfidf.fit_transform(X_gr)
 
 
-Y = data.iloc[:, 11]
-
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state= 20)
-
-model = Sequential()
-
-model.add(Dense(500, input_shape=(500,), activation='relu'))
-
-model.add(Dense(100, activation='relu'))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(5, activation='relu'))
-model.add(Dense(2, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+X_gr = tfdf.todense()
 
 
-model.fit(X_train, y_train, epochs=100)
+Y_gr = data.iloc[:, 11]
 
-ttest = model.predict(X_test)
+X_train, X_test, y_train, y_test = train_test_split(X_gr, Y_gr, test_size=0.3, random_state= 20)
+
+model_gr_input = tf.keras.Input(shape=(500,))
+
+model_gr_layer_1 = tf.keras.layers.Dense(500, activation='relu')(model_gr_input)
+
+model_gr_layer_2 = tf.keras.layers.Dense(400, activation='relu')(model_gr_layer_1)
+
+model_gr_layer_3 = tf.keras.layers.Dense(250, activation='relu')(model_gr_layer_2)
+
+model_gr_layer_4 = tf.keras.layers.Dense(200, activation='relu')(model_gr_layer_3)
+
+model_gr_layer_5 = tf.keras.layers.Dense(50, activation='relu')(model_gr_layer_4)
+
+model_gr_layer_6 = tf.keras.layers.Dense(100, activation='relu')(model_gr_layer_5)
+
+model_gr_layer_7 = tf.keras.layers.Dense(20, activation='relu')(model_gr_layer_6)
+
+model_gr_layer_8 = tf.keras.layers.Dense(10, activation='relu')(model_gr_layer_7)
+
+
+model_gr_layer_9 = tf.keras.layers.Dense(5, activation='relu')(model_gr_layer_8)
+
+output = tf.keras.layers.Dense(1, activation='sigmoid')(model_gr_layer_9)
+
+model_gr = Model(inputs=model_gr_input, outputs=output)
+
+model_gr.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+
+model_gr.fit(X_train, y_train, epochs=100)
+
+ttest = model_gr.predict(X_test)
 
 
 smp = "worst service, had a very bad experience"
@@ -234,6 +250,75 @@ smp = remove_noise(smp)
 smp = tfidf.transform([smp]).todense()
 
 print(model.predict(smp))
+
+
+df_movie = pd.read_csv('IMDB_Dataset.csv')
+
+df_movie['sentiment'] = label_encoder.fit_transform(df_movie['sentiment'])
+
+df_movie['review'] = df_movie['review'].apply(remove_noise)
+
+df_movie.to_csv('movie_review_lematized.csv', sep='\t')
+
+
+X = tfidf.fit_transform(df_movie['review']).todense()
+
+Y = df_movie['sentiment']
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state= 20)
+
+
+
+
+model_movie_input = tf.keras.Input(shape=(500,))
+
+model_movie_layer_1 = tf.keras.layers.Dense(500, activation='relu')(model_movie_input)
+
+model_movie_layer_2 = tf.keras.layers.Dense(400, activation='relu')(model_movie_layer_1)
+
+model_movie_layer_3 = tf.keras.layers.Dense(250, activation='relu')(model_movie_layer_2)
+
+model_movie_layer_4 = tf.keras.layers.Dense(200, activation='relu')(model_movie_layer_3)
+
+model_movie_layer_5 = tf.keras.layers.Dense(50, activation='relu')(model_movie_layer_4)
+
+model_movie_layer_6 = tf.keras.layers.Dense(100, activation='relu')(model_movie_layer_5)
+
+model_movie_layer_7 = tf.keras.layers.Dense(20, activation='relu')(model_movie_layer_6)
+
+model_movie_layer_8 = tf.keras.layers.Dense(10, activation='relu')(model_movie_layer_7)
+
+
+model_movie_layer_9 = tf.keras.layers.Dense(5, activation='relu')(model_movie_layer_8)
+
+output = tf.keras.layers.Dense(1, activation='sigmoid')(model_movie_layer_9)
+
+model = Model(inputs=model_movie_input, outputs=output)
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+
+model.fit(X_train, y_train, epochs=100)
+
+ttest = model.predict(X_test)
+
+
+
+model_gr.save('gr_review_model.h5')
+
+model.save('movie_review_model.h5')
+
+
+ld = load_model('gr_review_model.h5')
+
+smp = "worst service, had a very bad experience"
+
+smp = remove_noise(smp)
+
+smp = tfidf.transform([smp]).todense()
+
+print(ld.predict(smp))
 
 
 
