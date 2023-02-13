@@ -170,6 +170,8 @@ def createDataFrame(file):
 for file in filenames:
     createDataFrame(file)
     
+
+df_review.to_csv('review_data.csv')
     
 complaints = df_review[df_review['rating'] <= 3]
 
@@ -321,4 +323,9 @@ smp = tfidf.transform([smp]).todense()
 print(ld.predict(smp))
 
 
+
+
+import pickle
+
+pickle.dump(tfidf, open("tfidf.pickle", "wb"))
 
