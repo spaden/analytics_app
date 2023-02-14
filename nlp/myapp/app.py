@@ -122,7 +122,7 @@ def get_allsentiments():
     df = pd.read_csv('../review_data.csv')
 
 
-    df = df.iloc[:50, :]
+    df = df.iloc[:5, :]
 
     df = dateutilmod.generateDates(df)
 
@@ -147,19 +147,23 @@ def get_allsentiments():
 
     ratCount = ratingCount(df)
 
-    worMap = getWordCloud(df)
+    worMapPos = getWordCloud(df[df['predsentiment'] >= 0.6])
+
+    wordMapNeg = getWordCloud(df[df['predsentiment'] <= 0.5])
 
 
     return {
-       'orgSent': df.to_json(orient ='values'),
-       'wordCloud': worMap,
+       'orgSent': df.to_json(orient ='records', force_ascii=False),
+       'wordCloud': {
+          'positive': worMapPos,
+          'negative': wordMapNeg
+       },
        'ratingCount': ratCount,
        'ratingOverYears': ratOverYears,
        'ratDifferenceYears': ratDiffOverYears,
        'confidence_interval': cI,
         'ptests': pTestRes
     }
-
 
 
 @app.route("/getsentiment", methods=['POST'])

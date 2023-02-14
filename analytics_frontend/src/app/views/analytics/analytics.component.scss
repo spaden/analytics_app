@@ -1,0 +1,25 @@
+.home {
+    position: relative;
+    .navbar {
+        height: 3rem;
+        width: 100%;
+        background-color: aliceblue;
+        display: flex;
+        align-items: center;
+    }
+
+    .content {
+        display: grid;
+        grid-template-columns: 0.2fr 1fr;
+        &__sidebar {
+            height: calc(100vh - 3rem);
+            background-color: bisque;
+        }
+
+        &__graphs {
+            overflow-y: scroll;
+            height: calc(100vh - 3rem);
+            
+        }
+    }
+}
