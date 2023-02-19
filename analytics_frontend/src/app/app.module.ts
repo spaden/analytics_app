@@ -11,6 +11,7 @@ import { HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './views/home/home.component';
 import { AnalyticsComponent } from './views/analytics/analytics.component'
+import { TagCloudComponent } from 'angular-tag-cloud-module';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { AnalyticsComponent } from './views/analytics/analytics.component'
     FormsModule,
     FormsModuleModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    TagCloudComponent
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

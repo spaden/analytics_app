@@ -7,13 +7,70 @@
             T
         </div>
         <div class="content__graphs">
-            <canvas id="myChart"></canvas>
+            <div class="content__graphs__view">
+                <div class="content__graphs__view__maingraph">
+                    <canvas id="diffchart"></canvas>
+                    <canvas id="overallrat"></canvas>
+                </div>
 
-            <div class="test">
-                T
+                <div class="content__graphs__view__averageratinggraphs">
+                    <canvas id="testchart"></canvas>
+                    <canvas id="anchart"></canvas>
+                </div>
+                
+                <div class="content__graphs__view__hypothesiswindow">
+                    
+                    <div class="content__graphs__view__hypothesiswindow__ptests">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>Year comparison</td>
+                                    <td>p_value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of pTestData | keyvalue">
+                                    <td>{{item.key}}</td>
+                                    <td>{{item.value}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="content__graphs__view__hypothesiswindow__cofinterval"> 
+                        <b>Confidence Interval of ratings</b>
+                        <br><br>
+                        {{confi[0]}} - {{confi[1]}}
+                    </div>
+                </div>
+
+                <div class="content__graphs__view__reviewlabels">
+                    <div class="content__graphs__view__reviewlabels__window">
+                        <ng-container *ngFor="let item of reviewData"
+                             class="reviewItem">
+                            <ng-container
+                                 *ngIf="(item['label'] >= 0.5)">
+                                  <div class="reviewItem">
+                                    <div><b>{{item.name}} -- {{item.postDate}}</b></div>
+                                    <div>{{item.reviewText}}</div>
+                                  </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <div class="content__graphs__view__reviewlabels__window">
+                        <ng-container *ngFor="let item of reviewData"
+                             class="reviewItem">
+                            <ng-container
+                                 *ngIf="(item['label'] < 0.5)">
+                                  <div class="reviewItem">
+                                    <div><b>{{item.name}} -- {{item.postDate}}</b></div>
+                                    <div>{{item.reviewText}}</div>
+                                  </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-
 </div>

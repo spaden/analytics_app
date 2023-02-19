@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { data } from '../../utils/sampledata'
 Chart.register(...registerables);
+import { CloudData, CloudOptions } from 'angular-tag-cloud-module';
 
 @Component({
   selector: 'app-analytics',
@@ -8,44 +10,101 @@ Chart.register(...registerables);
   styleUrls: ['./analytics.component.scss']
 })
 export class AnalyticsComponent implements OnInit {
+    
+  pTestData: any = {}
 
-  constructor() { }
+  confi: Array<number> = []
+  overallRatingCount: any
+
+  postiveWords: any = []
+
+  reviewData: any = []
+  
+  constructor() {}
+
+
+  countRatingDataUtil() {
+    let ctrating = JSON.parse(data.ratingOverYears.ctrating)
+
+    let avrating = JSON.parse(data.ratingOverYears.rating)
+    
+    let labels = []
+    let dt = []
+    
+    let keys = Object.keys(ctrating)
+    let keysAv = Object.keys(avrating)
+
+
+    labels = Object.values(ctrating[keys[0]])
+    dt = Object.values(ctrating[keys[1]])
+    
+    let avLabels = Object.values(avrating[keysAv[0]])
+    let dtav = Object.values(avrating[keysAv[1]])
+
+    var test = this.createChart('bar', labels,
+    dt,
+    'Rating count over years', 
+    'testchart')
+
+    this.createChart('bar', avLabels, dtav, 'Average rating over year', 'anchart')
+
+  }
+
+
+  createChart(charttype: any, labels: Array<any>, data: Array<any>, title: string, id: string,
+    options: any = {}) {
+    return new Chart(id, {
+        type: charttype,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: title,
+                data: data
+            }]
+        },
+        options: options
+    })
+  }
+
+  createReviewUtil() {
+    const reviewData = JSON.parse(data.orgSent)
+    
+    const modifiedData = []
+
+    for (let reviewItem in reviewData) {
+
+      modifiedData.push({
+        name: reviewData[reviewItem][0],
+        postDate: reviewData[reviewItem][6],
+        reviewText: reviewData[reviewItem][7],
+        label: reviewData[reviewItem][12]
+      })
+    }
+    
+    this.reviewData = modifiedData
+
+    console.log(this.reviewData)
+  }
 
   ngOnInit(): void {
-    var myChart = new Chart("myChart", {
-      type: 'bar',
-      data: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-          datasets: [{
-              label: '# of Votes',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(255, 159, 64, 0.2)'
-              ],
-              borderColor: [
-                  'rgba(255, 99, 132, 1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                  'rgba(255, 159, 64, 1)'
-              ],
-              borderWidth: 1
-          }]
-      },
-      options: {
-          scales: {
-              y: {
-                  beginAtZero: true
-              }
-          }
-      }
-  });
+    var myChart = this.createChart('line', ['2020', '2021', '2022', '2023'],
+        [0, -1, 2, 1],
+        'Rating Difference over years', 
+        'diffchart')
+    this.countRatingDataUtil()
+
+    this.confi = Object.values(data.confidence_interval)
+
+    this.pTestData = JSON.parse(data.ptests)
+
+    this.overallRatingCount = JSON.parse(data.ratingCount)
+
+    this.createChart('bar', Object.keys(this.overallRatingCount), Object.values(this.overallRatingCount),
+      'Overall Rating count',
+      'overallrat')
+
+
+    this.createReviewUtil()
   }
 
 }
