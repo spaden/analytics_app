@@ -3,6 +3,7 @@ import { Chart, registerables } from 'chart.js';
 import { data } from '../../utils/sampledata'
 Chart.register(...registerables);
 import { CloudData, CloudOptions } from 'angular-tag-cloud-module';
+import { FileUploadService } from 'src/app/services/fileupload.service';
 
 @Component({
   selector: 'app-analytics',
@@ -19,8 +20,12 @@ export class AnalyticsComponent implements OnInit {
   postiveWords: any = []
 
   reviewData: any = []
+
+  file: File | undefined
+
+  isFileUploading: boolean = false
   
-  constructor() {}
+  constructor(private fileUploadService: FileUploadService) {}
 
 
   countRatingDataUtil() {
@@ -105,6 +110,22 @@ export class AnalyticsComponent implements OnInit {
 
 
     this.createReviewUtil()
+  }
+
+  onFileChange(event: any) {
+    this.file = event.target.files[0]
+    console.log(this.file)
+  }
+
+  uploadFile() {
+    this.isFileUploading = true
+    this.fileUploadService.upload(this.file).subscribe(res => {
+      alert('uploaded')
+      this.isFileUploading = false
+    }, err => {
+      alert(err)
+      this.isFileUploading = false
+    })
   }
 
 }

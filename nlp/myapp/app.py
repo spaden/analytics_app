@@ -116,13 +116,17 @@ def ptest(df):
 
 
 
-@app.route("/getallsentiments", methods=['GET'])
+@app.route("/getallsentiments", methods=['POST'])
 def get_allsentiments():
-    print('entered')
-    df = pd.read_csv('../review_data.csv')
+
+    data = request.json
+
+
+    df = pd.read_csv(data['filename'])
 
 
     df = df.iloc[:5, :]
+
 
     df = dateutilmod.generateDates(df)
 

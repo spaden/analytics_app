@@ -8,6 +8,29 @@
         </div>
         <div class="content__graphs">
             <div class="content__graphs__view">
+                <div class="content__graphs__view__fileupload">
+                    <div class="content__graphs__view__fileupload__controls"
+                         [ngClass]="isFileUploading ? 'loading' : ''">
+                        <div><b>Upload a CSV file</b></div> <br>
+                        <input class="form-control"
+                            type="file" 
+                            (change)="onFileChange($event)"
+                            [disabled]="isFileUploading">
+                        <app-button name="filebutton"
+                                    value="upload"
+                                    btnType="primary"
+                                    [disabled]="!file"
+                                    (onClick)="uploadFile()"></app-button>
+                    </div>
+                    
+                    <div class="content__graphs__view__fileupload__spinner"
+                         *ngIf="isFileUploading">
+                        <app-spinner></app-spinner>
+                    </div>
+                    
+                </div>
+
+
                 <div class="content__graphs__view__maingraph">
                     <canvas id="diffchart"></canvas>
                     <canvas id="overallrat"></canvas>
