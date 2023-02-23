@@ -27,7 +27,7 @@ router.post('/checkuser', async (req, res) => {
     let userAuth = false
 
     try {
-        
+
         const cursor = await client.db('analytics_app')
                             .collection('users_auth')
                             .find({username: data.username, userpass: data.userpass})

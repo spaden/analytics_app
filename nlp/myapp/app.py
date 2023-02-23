@@ -125,7 +125,7 @@ def get_allsentiments():
     df = pd.read_csv(data['filename'])
 
 
-    df = df.iloc[:5, :]
+    df = df.iloc[:20, :]
 
 
     df = dateutilmod.generateDates(df)

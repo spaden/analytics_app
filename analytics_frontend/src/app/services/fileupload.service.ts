@@ -19,7 +19,9 @@ export class FileUploadService {
     	const formData = new FormData();
     		
     	// Store form name as "file" with file data
-    	formData.append("myFile", file, file.name);
+    	formData.append("myFile", file, file.name)
+
+        formData.append('username', 'testuser')
     		
     	// Make http post request over api
     	// with formData as req

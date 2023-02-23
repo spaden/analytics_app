@@ -3,6 +3,8 @@ let express = require("express"),
   multer = require("multer"),
   axios = require('axios');
 
+const { MongoClient } = require("mongodb");
+
 let upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
@@ -14,12 +16,32 @@ let upload = multer({
   })
 })
 
+async function insertData(username, analyticsdata) {
+  var url = "mongodb://localhost:27017/"
+
+  const client = new MongoClient(url)
+  
+  try {
+    const result = await client.db('analytics_app')
+                            .collection('user_data')
+                            .updateOne(
+                              { 'username': username },
+                              { $set: { 'userdata': analyticsdata } },
+                              { upsert: true })
+    
+ } catch(err) {
+   console.log(err)
+ }
+}
+
 
 router.post("/", upload.single('myFile'),   async (req, res, next) => {
     
-    const files = req.file
+   const username =  req.body.username
 
-    if (!files) {
+   const files = req.file
+
+   if (!files) {
         const error = new Error('Please choose files')
         error.httpStatusCode = 400
         return next(error)
@@ -29,10 +51,11 @@ router.post("/", upload.single('myFile'),   async (req, res, next) => {
         'filename': 'D:/projects/github/analytics_app/file_upload_service/userfiles/' + files.filename
     })
    .then(re => {
-    res.send(re.data)
+      insertData(username, re.data)
+      res.send({dt: re.data})
    })
    .catch(err => console.log(err))
-   
+  
 })
 
 module.exports = router;
