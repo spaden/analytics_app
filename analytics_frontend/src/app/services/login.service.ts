@@ -1,10 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Login } from '../store/loginstore/login.model';
 
-interface userlogin {
-    username: string
-    userpass: string
-}
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +10,10 @@ export class LoginService {
 
   constructor(private http: HttpClient) { }
 
-  checkUser(data: userlogin) {
+  checkUser(data: Login) {
     return this.http.post('http://localhost:3000/user/checkuser', {
         username: data.username,
-        userpass: data.userpass
+        userpass: data.password
     })
   }
 }

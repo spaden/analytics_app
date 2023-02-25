@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './views/home/home.component';
 import { AnalyticsComponent } from './views/analytics/analytics.component'
 import { TagCloudComponent } from 'angular-tag-cloud-module';
+import { StoreModule } from '@ngrx/store';
+import { loginDetailsReducer } from './store/loginstore/login.reducer';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,10 @@ import { TagCloudComponent } from 'angular-tag-cloud-module';
     FormsModuleModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    TagCloudComponent
+    TagCloudComponent,
+    StoreModule.forRoot({
+      login: loginDetailsReducer
+    })
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

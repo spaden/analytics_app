@@ -92,8 +92,8 @@ export class AnalyticsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    var myChart = this.createChart('line', ['2020', '2021', '2022', '2023'],
-        [0, -1, 2, 1],
+    this.createChart('line', Object.keys(JSON.parse(data.ratDifferenceYears)),
+        Object.values(JSON.parse(data.ratDifferenceYears)),
         'Rating Difference over years', 
         'diffchart')
     this.countRatingDataUtil()
