@@ -6,8 +6,9 @@ import { Router } from '@angular/router'
 import { Observable } from 'rxjs'
 import { Store } from '@ngrx/store'
 import { Login } from 'src/app/store/loginstore/login.model'
+import { UserData } from 'src/app/store/userdata/userdata.model'
 import { updateUserDetails } from 'src/app/store/loginstore/login.actions'
-
+import { updateUserReportDetails } from 'src/app/store/userdata/userdata.actions'
 
 @Component({
   selector: 'app-home',
@@ -33,10 +34,15 @@ export class HomeComponent implements OnInit {
   constructor(private http: HttpClient, 
               private loginservice: LoginService, 
               private router: Router, 
-              private store: Store<{login: Login}>) { }
+              private store: Store<{login: Login, userReportData: UserData}>) { }
 
   ngOnInit(): void {
-    this.loginDet = this.store.select(state => this.state = state.login)
+    this.loginDet = this.store.select(state => state.login)
+
+    this.loginDet.subscribe(resp => {
+      this.state.username = resp.username
+      this.state.password = resp.password
+    })
   }
   
 
@@ -56,10 +62,15 @@ export class HomeComponent implements OnInit {
   authUser() {
     this.checkinguser = true
     this.loginservice.checkUser(this.state).subscribe(resp => {
-      this.checkinguser = false
+      this.checkinguser = false      
+      let dt = {}
+      // @ts-expect-error: Let's ignore a compile error like this unreachable code
+      if ('userdata' in resp) dt = resp['userdata']
+      this.store.dispatch(updateUserReportDetails({ userreportdetails: dt  }))
+
       setTimeout(() => {
         this.router.navigate(['/analytics'])
-      }, 2000)
+      }, 500)
     }, error => {
       this.userAuthError = true
       this.checkinguser = false

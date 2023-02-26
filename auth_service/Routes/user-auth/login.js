@@ -25,6 +25,7 @@ router.post('/checkuser', async (req, res) => {
 
     const client = new MongoClient(url)
     let userAuth = false
+    let newUser = false
 
     try {
 
@@ -39,6 +40,7 @@ router.post('/checkuser', async (req, res) => {
             const insertStatus = await insertUser(data, client.db('analytics_app'))
             if (insertStatus) {
                 userAuth = true
+                newUser = true
             }
         }
     } catch {
@@ -52,9 +54,21 @@ router.post('/checkuser', async (req, res) => {
     } else {
         res.status(500)
     }
-    
+    let userRes = [{}]
+    if (!newUser) {
+        try {
+            const cursor = await client.db('analytics_app')
+                                        .collection('user_data')
+                                        .find({username: data.username}).project({ userdata: 1, _id: 0})
+            const resp = await cursor.toArray()
 
-    res.send()
+            userRes = resp
+
+        } catch {
+
+        }
+    }
+    res.send(userRes)
 })
 
 

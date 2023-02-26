@@ -3,18 +3,13 @@ import { UserData } from "./userdata.model"
 import { updateUserReportDetails } from "./userdata.actions"
 
 const initialState: UserData = {
-    confidence_interval: [],
-    orgSent: [],
-    ptest: {},
-    ratDifferenceYears: {},
-    ratingCount: {},
-    ratingOverYears: {},
-    wordCloud: {}
+   userReportData: {}
 }
 
-export const loginDetailsReducer = createReducer(
+export const userReportReducer = createReducer(
     initialState,
-    on(updateUserReportDetails, (state: any, {userreportdetails} )=> {        
+    on(updateUserReportDetails, (state: any, {userreportdetails} )=> {  
+        console.log(userreportdetails)      
         return userreportdetails
     })
 )

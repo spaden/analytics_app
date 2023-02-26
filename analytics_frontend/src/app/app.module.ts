@@ -14,6 +14,7 @@ import { AnalyticsComponent } from './views/analytics/analytics.component'
 import { TagCloudComponent } from 'angular-tag-cloud-module';
 import { StoreModule } from '@ngrx/store';
 import { loginDetailsReducer } from './store/loginstore/login.reducer';
+import { userReportReducer } from './store/userdata/userdata.reducer';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { loginDetailsReducer } from './store/loginstore/login.reducer';
     HttpClientModule,
     TagCloudComponent,
     StoreModule.forRoot({
-      login: loginDetailsReducer
+      login: loginDetailsReducer,
+      userReportData: userReportReducer
     })
   ],
   providers: [{

@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
-import { data } from '../../utils/sampledata'
 Chart.register(...registerables);
 import { CloudData, CloudOptions } from 'angular-tag-cloud-module';
 import { FileUploadService } from 'src/app/services/fileupload.service';
+import { UserData } from 'src/app/store/userdata/userdata.model';
+import { Login } from 'src/app/store/loginstore/login.model'
+import { Store } from '@ngrx/store'
+import { updateUserReportDetails } from 'src/app/store/userdata/userdata.actions';
 
 @Component({
   selector: 'app-analytics',
@@ -24,14 +27,24 @@ export class AnalyticsComponent implements OnInit {
   file: File | undefined
 
   isFileUploading: boolean = false
+
+  data: any | undefined
+
+  username: any
   
-  constructor(private fileUploadService: FileUploadService) {}
+  constructor(private fileUploadService: FileUploadService,
+    private store: Store<{login: Login, userReportData: UserData}>) {}
+
+  
+  checkIfDataExists() {
+    return JSON.stringify(this.data) === '{}'
+  }
 
 
   countRatingDataUtil() {
-    let ctrating = JSON.parse(data.ratingOverYears.ctrating)
+    let ctrating = JSON.parse(this.data.ratingOverYears.ctrating)
 
-    let avrating = JSON.parse(data.ratingOverYears.rating)
+    let avrating = JSON.parse(this.data.ratingOverYears.rating)
     
     let labels = []
     let dt = []
@@ -46,10 +59,10 @@ export class AnalyticsComponent implements OnInit {
     let avLabels = Object.values(avrating[keysAv[0]])
     let dtav = Object.values(avrating[keysAv[1]])
 
-    var test = this.createChart('bar', labels,
-    dt,
-    'Rating count over years', 
-    'testchart')
+    this.createChart('bar', labels,
+      dt,
+      'Rating count over years', 
+      'testchart')
 
     this.createChart('bar', avLabels, dtav, 'Average rating over year', 'anchart')
 
@@ -72,37 +85,45 @@ export class AnalyticsComponent implements OnInit {
   }
 
   createReviewUtil() {
-    const reviewData = JSON.parse(data.orgSent)
+    const reviewData = JSON.parse(this.data.orgSent)
     
     const modifiedData = []
 
     for (let reviewItem in reviewData) {
-
       modifiedData.push({
-        name: reviewData[reviewItem][0],
-        postDate: reviewData[reviewItem][6],
-        reviewText: reviewData[reviewItem][7],
-        label: reviewData[reviewItem][12]
+        name: reviewData[reviewItem].name,
+        postDate: reviewData[reviewItem].reviewDate,
+        reviewText: reviewData[reviewItem].reviewText,
+        label: reviewData[reviewItem].predsentiment
       })
     }
     
     this.reviewData = modifiedData
 
-    console.log(this.reviewData)
   }
 
   ngOnInit(): void {
-    this.createChart('line', Object.keys(JSON.parse(data.ratDifferenceYears)),
-        Object.values(JSON.parse(data.ratDifferenceYears)),
+    
+    this.store.select(state => state.userReportData).subscribe(res => {
+      this.data = res
+    })
+
+    this.store.select(state => state.login).subscribe(res => {
+      this.username = res.username
+    })
+
+
+    this.createChart('line', Object.keys(JSON.parse(this.data.ratDifferenceYears)),
+        Object.values(JSON.parse(this.data.ratDifferenceYears)),
         'Rating Difference over years', 
         'diffchart')
     this.countRatingDataUtil()
 
-    this.confi = Object.values(data.confidence_interval)
+    this.confi = Object.values(this.data.confidence_interval)
 
-    this.pTestData = JSON.parse(data.ptests)
+    this.pTestData = JSON.parse(this.data.ptests)
 
-    this.overallRatingCount = JSON.parse(data.ratingCount)
+    this.overallRatingCount = JSON.parse(this.data.ratingCount)
 
     this.createChart('bar', Object.keys(this.overallRatingCount), Object.values(this.overallRatingCount),
       'Overall Rating count',
@@ -120,10 +141,9 @@ export class AnalyticsComponent implements OnInit {
   uploadFile() {
     this.isFileUploading = true
     this.fileUploadService.upload(this.file).subscribe(res => {
-      alert('uploaded')
+      this.store.dispatch(updateUserReportDetails({ userreportdetails: res.dt }))
       this.isFileUploading = false
     }, err => {
-      alert(err)
       this.isFileUploading = false
     })
   }
