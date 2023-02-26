@@ -1,14 +1,28 @@
 <div class="home">
     <div class="navbar">
-        Welcome {{ username }}
+        <b>Welcome {{ username }}</b>
     </div>
     <div class="content">
         <div class="content__sidebar">
-            T
+            <a 
+            (click)="scrollTo('diffchart')">Rating difference</a>
+            <br>
+            <a 
+            (click)="scrollTo('anchart')">Average charts</a>
+            <br>
+            <a 
+            (click)="scrollTo('hypwindow')">Hypothesis tests</a>
+            <br>
+            <a
+            (click)="scrollTo('reviewwindow')">Auto Review labelled</a>
+            <br>
+            <a
+            (click)="scrollTo('fileupload')">Upload new file</a>
         </div>
         <div class="content__graphs">
             <div class="content__graphs__view">
-                <div class="content__graphs__view__fileupload">
+                <div class="content__graphs__view__fileupload"
+                     id="fileupload">
                     <div class="content__graphs__view__fileupload__controls"
                          [ngClass]="isFileUploading ? 'loading' : ''">
                         <div><b>Upload a CSV file</b></div> <br>
@@ -40,7 +54,8 @@
                     <canvas id="anchart"></canvas>
                 </div>
                 
-                <div class="content__graphs__view__hypothesiswindow">
+                <div class="content__graphs__view__hypothesiswindow"
+                     id="hypwindow">
                     
                     <div class="content__graphs__view__hypothesiswindow__ptests">
                         <table>
@@ -66,7 +81,8 @@
                     </div>
                 </div>
 
-                <div class="content__graphs__view__reviewlabels">
+                <div class="content__graphs__view__reviewlabels"
+                     id="reviewwindow">
                     <div class="content__graphs__view__reviewlabels__window">
                         <ng-container *ngFor="let item of reviewData"
                              class="reviewItem">

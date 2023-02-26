@@ -65,7 +65,7 @@ export class HomeComponent implements OnInit {
       this.checkinguser = false      
       let dt = {}
       // @ts-expect-error: Let's ignore a compile error like this unreachable code
-      if ('userdata' in resp) dt = resp['userdata']
+      if(resp.length > 0) dt = resp[0]['userdata']
       this.store.dispatch(updateUserReportDetails({ userreportdetails: dt  }))
 
       setTimeout(() => {

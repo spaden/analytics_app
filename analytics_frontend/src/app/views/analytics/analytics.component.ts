@@ -31,6 +31,12 @@ export class AnalyticsComponent implements OnInit {
   data: any | undefined
 
   username: any
+
+  barchart1: any
+  barchart2: any
+  barchart3: any
+  linechart: any
+
   
   constructor(private fileUploadService: FileUploadService,
     private store: Store<{login: Login, userReportData: UserData}>) {}
@@ -59,12 +65,12 @@ export class AnalyticsComponent implements OnInit {
     let avLabels = Object.values(avrating[keysAv[0]])
     let dtav = Object.values(avrating[keysAv[1]])
 
-    this.createChart('bar', labels,
+    this.barchart1 =  this.createChart('bar', labels,
       dt,
       'Rating count over years', 
       'testchart')
 
-    this.createChart('bar', avLabels, dtav, 'Average rating over year', 'anchart')
+    this.barchart2 = this.createChart('bar', avLabels, dtav, 'Average rating over year', 'anchart')
 
   }
 
@@ -104,6 +110,10 @@ export class AnalyticsComponent implements OnInit {
 
   ngOnInit(): void {
     
+    this.store.select(state => {
+      this.data = state.userReportData
+    })
+
     this.store.select(state => state.userReportData).subscribe(res => {
       this.data = res
     })
@@ -112,8 +122,11 @@ export class AnalyticsComponent implements OnInit {
       this.username = res.username
     })
 
+    this.generateCharts()
+  }
 
-    this.createChart('line', Object.keys(JSON.parse(this.data.ratDifferenceYears)),
+  generateCharts() {
+    this.linechart =  this.createChart('line', Object.keys(JSON.parse(this.data.ratDifferenceYears)),
         Object.values(JSON.parse(this.data.ratDifferenceYears)),
         'Rating Difference over years', 
         'diffchart')
@@ -125,7 +138,7 @@ export class AnalyticsComponent implements OnInit {
 
     this.overallRatingCount = JSON.parse(this.data.ratingCount)
 
-    this.createChart('bar', Object.keys(this.overallRatingCount), Object.values(this.overallRatingCount),
+    this.barchart3 = this.createChart('bar', Object.keys(this.overallRatingCount), Object.values(this.overallRatingCount),
       'Overall Rating count',
       'overallrat')
 
@@ -143,9 +156,27 @@ export class AnalyticsComponent implements OnInit {
     this.fileUploadService.upload(this.file).subscribe(res => {
       this.store.dispatch(updateUserReportDetails({ userreportdetails: res.dt }))
       this.isFileUploading = false
+      this.destroycharts()
+      this.generateCharts()
     }, err => {
       this.isFileUploading = false
     })
+  }
+
+  scrollTo(element: any): void {
+    (document.getElementById(element) as HTMLElement).scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+  }
+
+  destroycharts() {
+    try {
+      this.barchart1.destroy()
+      this.barchart2.destroy()
+      this.barchart3.destroy()
+      this.linechart.destroy()
+    } catch(err) {
+
+    }
+    
   }
 
 }

@@ -6,19 +6,32 @@
         background-color: aliceblue;
         display: flex;
         align-items: center;
+        b {
+            margin-left: 2rem;
+            font-size: 1.2rem;
+        }
     }
 
     .content {
         display: grid;
         grid-template-columns: 0.2fr 1fr;
         &__sidebar {
-            height: calc(100vh - 3rem);
+            height: calc(100vh - 5rem);
             background-color: bisque;
+            padding-top: 2rem;
+            padding-left: 2rem;
+            a {
+                cursor: pointer;
+                display: block;
+                margin-bottom: 2rem;
+                color: #005bc6;
+                font-size: 1.05rem;
+            }
         }
 
         &__graphs {
             overflow-y: scroll;
-            height: calc(100vh - 3rem);
+            height: calc(100vh - 5rem);
             &__view {
                 margin: 3rem;
                 display: flex;
